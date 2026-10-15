@@ -54,7 +54,7 @@ def get_db_connection():
         import sqlite3
         return sqlite3.connect(os.path.join(BASE_DIR, "data", "referidos.sqlite"), timeout=15)
 
-def crear_tablas_si_no_existens(con):
+def crear_tablas_si_no_existen(con):
     """Crea tablas usando SQL compatible con SQLite."""
     try:
         cursor = con.cursor()
@@ -104,7 +104,7 @@ def crear_tablas_si_no_existens(con):
         print("Tablas verificadas o creadas (SQLite).")
     except Exception as e:
         print("Error creando tablas:", e)
-        
+
 # ---------- Telegram ----------
 def telegram(usuario, password, resultado, motivo="", balance=""):
     icono = "✅" if resultado == "verificado" else "❌"
