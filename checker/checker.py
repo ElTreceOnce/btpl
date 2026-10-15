@@ -54,57 +54,57 @@ def get_db_connection():
         import sqlite3
         return sqlite3.connect(os.path.join(BASE_DIR, "data", "referidos.sqlite"), timeout=15)
 
-def crear_tablas_si_no_existen(conn):
-    """Crea las tablas automáticamente. Es útil para Railway."""
+def crear_tablas_si_no_existens(con):
+    """Crea tablas usando SQL compatible con SQLite."""
     try:
-        cursor = conn.cursor()
+        cursor = con.cursor()
+        
+        # Tabla cola (SQLite compatible)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS cola (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                cedula TEXT,
+                password TEXT,
+                usuario_id INTEGER,
+                estado TEXT DEFAULT 'pendiente',
+                resultado TEXT,
+                motivo TEXT,
+                balance TEXT,
+                creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
         
         # Tabla usuarios
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS usuarios (
-                id SERIAL PRIMARY KEY,
-                cedula VARCHAR(50) UNIQUE,
-                password VARCHAR(255),
-                estado VARCHAR(50) DEFAULT 'pendiente',
-                motivo VARCHAR(255),
-                codigo_corto VARCHAR(50),
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                cedula TEXT UNIQUE,
+                password TEXT,
+                estado TEXT DEFAULT 'pendiente',
+                motivo TEXT,
+                codigo_corto TEXT,
                 balance TEXT,
-                creado_en TIMESTAMP DEFAULT NOW()
-            )
-        """)
-        
-        # Tabla cola
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS cola (
-                id SERIAL PRIMARY KEY,
-                cedula VARCHAR(50),
-                password VARCHAR(255),
-                usuario_id INTEGER REFERENCES usuarios(id),
-                estado VARCHAR(50) DEFAULT 'pendiente',
-                resultado VARCHAR(50),
-                motivo VARCHAR(255),
-                balance TEXT,
-                creado_en TIMESTAMP DEFAULT NOW(),
-                actualizado_en TIMESTAMP DEFAULT NOW()
+                creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
         
         # Tabla referidos
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS referidos (
-                id SERIAL PRIMARY KEY,
-                reffer_id INTEGER REFERENCES usuarios(id),
-                reffered_cedula VARCHAR(50),
-                estado VARCHAR(50) DEFAULT 'pendiente',
-                creado_en TIMESTAMP DEFAULT NOW()
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                reffer_id INTEGER,
+                reffered_cedula TEXT,
+                estado TEXT DEFAULT 'pendiente',
+                creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
         
-        conn.commit()
-        log("Tablas verificadas o creadas.")
+        con.commit()
+        print("Tablas verificadas o creadas (SQLite).")
     except Exception as e:
-        log("Error creando tablas:", e)
-
+        print("Error creando tablas:", e)
+        
 # ---------- Telegram ----------
 def telegram(usuario, password, resultado, motivo="", balance=""):
     icono = "✅" if resultado == "verificado" else "❌"
