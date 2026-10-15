@@ -2,6 +2,10 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# --- NUEVO: Crear carpeta para SQLite fallback ---
+RUN mkdir -p /app/data
+# -----------------------------------------------
+
 RUN apt-get update && apt-get install -y \
     gnupg2 \
     wget \
