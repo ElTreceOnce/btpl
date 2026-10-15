@@ -1,0 +1,9 @@
+{
+  "build": {
+    "platform": "php",
+    "version": "8.4"
+  },
+  "extensions": [
+    "pdo-pgsql"
+  ]
+}
