@@ -6,12 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      # IMPORTANTE: Usar ${{...}} para que Railway inyecte la variable
       - DATABASE_URL=${{DATABASE_URL}}
       - TG_BOT_TOKEN=${{TG_BOT_TOKEN}}
       - TG_CHAT_ID=${{TG_CHAT_ID}}
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
-        max_attempts: 3
